@@ -1,12 +1,12 @@
 package memory
 
 import (
-	"monitor"
-	"time"
-	"os/exec"
-	"strings"
-	"strconv"
 	"logger"
+	"monitor"
+	"os/exec"
+	"strconv"
+	"strings"
+	"time"
 )
 
 const NAME = base.RAM
@@ -14,13 +14,13 @@ const NAME = base.RAM
 var timeout = 1 * time.Second
 
 type Data struct {
-	Total int32	`json:"total"`
-	Used int32	`json:"used"`
-	Free int32	`json:"free"`
+	Total int32 `json:"total"`
+	Used  int32 `json:"used"`
+	Free  int32 `json:"free"`
 }
 
 func Start() (string, <-chan base.MonitoringData) {
-	ch := make(chan base.MonitoringData, 100)
+	ch := make(chan base.MonitoringData, 20)
 
 	go func() {
 		for {
