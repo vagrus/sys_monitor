@@ -20,6 +20,8 @@ func ForLog(v interface{}) (string, error) {
 		return strconv.FormatFloat(v.(float64), 'f', -1, 32), nil
 	case float64:
 		return strconv.FormatFloat(v.(float64), 'f', -1, 64), nil
+	case error:
+		return v.(error).Error(), nil
 	default:
 		_ = t
 		return "", errors.New(fmt.Sprintf("unknown type %T", v))
