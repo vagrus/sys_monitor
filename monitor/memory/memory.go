@@ -41,7 +41,7 @@ func getData() Data {
 	outArr := strings.Split(string(out), " ")
 
 	if err != nil {
-		logger.Error(NAME, err.Error())
+		logger.Error(NAME, err)
 	}
 
 	total, _ := strconv.ParseInt(outArr[1], 10, 32)
