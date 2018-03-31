@@ -1,35 +1,38 @@
 package main
 
 import (
-	"monitor"
-	"monitor/memory"
 	"logger"
-
-	"encoding/json"
+	"monitor/memory"
+	"net/http"
+	"websock"
 )
 
+var addr = "0.0.0.0:8080"
 
 func main() {
 	err := logger.Init(logger.LEVEL_DEBUG)
 	if err != nil {
 		panic(err)
 	}
-
 	defer logger.Stop()
 
-	name, ch := memory.Start()
+	manager := websock.Manager{}
+	manager.Start()
 
-	logger.Debug(name)
+	defer manager.Stop()
 
-	worker(ch)
-}
+	_, ch := memory.Start()
 
-func worker(ch <-chan base.MonitoringData) {
-	for m := range ch {
-		j, err := json.Marshal(m)
-		println(string(j))
-		if err != nil {
-			println(err.Error())
+	go func() {
+		for data := range ch {
+			manager.Send(data)
 		}
-	}
+	}()
+
+	http.HandleFunc("/ws", func(w http.ResponseWriter, req *http.Request) {
+		logger.Debug("handle new client")
+		manager.NewClient(w, req)
+	})
+	logger.Error(http.ListenAndServe(addr, nil))
+
 }
